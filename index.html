@@ -1,0 +1,1391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tamta Animation</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Milonga&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@500&family=Noto+Nastaliq+Urdu:wght@500&display=swap" rel="stylesheet">
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
+
+  <style>
+    :root {
+
+      --font-title: "Milonga", serif;
+      --font-body: "Figtree", Arial, sans-serif;
+
+
+      --landing-bg: #560404;
+      --landing-text: #e8702a;
+      --landing-line: #f26b0f;
+      --credits-name: #f3d9c4;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      width: 100%;
+      min-height: 100%;
+      font-family: var(--font-body);
+      background: #cccccc;
+    }
+
+    html.lenis,
+    html.lenis body {
+      height: auto;
+    }
+
+    .lenis.lenis-smooth {
+      scroll-behavior: auto !important;
+    }
+
+    .page-background {
+      position: fixed;
+      inset: 0;
+      background: url("bg.png") center / cover no-repeat;
+      z-index: -10;
+      pointer-events: none;
+      transform: translateZ(0);
+    }
+
+    @property --wipe {
+      syntax: "<number>";
+      inherits: true;
+      initial-value: 0;
+    }
+
+    @property --cwipe {
+      syntax: "<number>";
+      inherits: true;
+      initial-value: 0;
+    }
+
+    /* ---------- Intro section (sits above the fixed landing, lifts away to reveal the pot) ---------- */
+    .intro {
+      position: relative;
+      z-index: 150;
+      min-height: 100vh;
+      min-height: 100svh;
+      display: flex;
+      align-items: center;
+      padding: clamp(72px, 12vh, 140px) 6vw clamp(90px, 14vh, 140px);
+      background: radial-gradient(ellipse at 18% 12%, #6e0a0a 0%, var(--landing-bg) 62%);
+      color: var(--landing-text);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+    }
+
+    .intro-inner {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+      gap: clamp(32px, 6vw, 96px);
+      align-items: center;
+    }
+
+    .intro .reveal {
+      opacity: 0;
+      will-change: opacity, transform;
+    }
+
+    .intro-eyebrow {
+      font-family: var(--font-body);
+      font-weight: 600;
+      font-size: clamp(11px, 1vw, 13px);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 18px;
+      opacity: 0.85;
+    }
+
+    .intro-title {
+      font-family: var(--font-title);
+      font-size: clamp(40px, 7vw, 104px);
+      line-height: 1.22;     
+      padding-bottom: 0.08em; 
+      font-weight: 400;
+      color: var(--landing-text);
+    }
+
+    .intro-lead {
+      margin-top: 20px;
+      max-width: 520px;
+      font-family: var(--font-body);
+      font-size: clamp(16px, 1.8vw, 26px);
+      line-height: 1.4;
+      font-weight: 400;
+      color: var(--credits-name);
+    }
+
+    .intro-points {
+      margin-top: clamp(24px, 4vh, 44px);
+      max-width: 520px;
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+
+    .intro-point h3 {
+      font-family: var(--font-body);
+      font-weight: 600;
+      font-size: clamp(11px, 1vw, 13px);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--landing-text);
+      margin-bottom: 6px;
+    }
+
+    .intro-point p {
+      font-family: var(--font-body);
+      font-style: italic;
+      font-size: clamp(14px, 1.3vw, 18px);
+      line-height: 1.55;
+      color: var(--credits-name);
+      opacity: 0.85;
+    }
+
+    .intro-media {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .intro-img {
+      width: 100%;
+      border: 2px dashed rgba(232, 112, 42, 0.6);
+      background: rgba(0, 0, 0, 0.18);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 12px;
+      color: var(--landing-text);
+      font-family: var(--font-body);
+      font-size: 14px;
+      letter-spacing: 1px;
+      overflow: hidden;
+    }
+
+    .intro-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .intro-img.wide {
+      aspect-ratio: 4 / 3;
+    }
+
+    .intro-img.small {
+      width: 68%;
+      aspect-ratio: 16 / 10;
+      align-self: flex-end;
+    }
+
+    .intro-cue {
+      position: absolute;
+      left: 50%;
+      bottom: 28px;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      color: var(--landing-text);
+    }
+
+    .intro-cue p {
+      font-family: var(--font-body);
+      font-weight: 600;
+      font-size: 11px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      opacity: 0.8;
+    }
+
+    .landing {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      pointer-events: none;
+      --wipe: 0;
+    }
+
+    .landing-bg {
+      position: absolute;
+      inset: 0;
+      background: var(--landing-bg);
+      -webkit-backdrop-filter: blur(22px);
+      backdrop-filter: blur(22px);
+
+      -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 33.33%, transparent 66.66%, transparent 100%);
+      mask-image: linear-gradient(to bottom, #000 0%, #000 33.33%, transparent 66.66%, transparent 100%);
+      -webkit-mask-size: 100% 300%;
+      mask-size: 100% 300%;
+      -webkit-mask-repeat: no-repeat;
+      mask-repeat: no-repeat;
+      -webkit-mask-position: 0 calc(var(--wipe) * 1%);
+      mask-position: 0 calc(var(--wipe) * 1%);
+    }
+
+    .landing-inner {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: clamp(24px, 5vh, 56px);
+      padding: 0 6vw;
+      will-change: opacity, transform, filter;
+    }
+
+    .tamta-wrap {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    #tamtaImg {
+      width: min(52vw, 380px);
+      max-height: 50svh;
+      height: auto;
+      object-fit: contain;
+      display: block;
+      opacity: 0;
+      will-change: transform, opacity;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+
+    .tamta-shadow {
+      width: min(34vw, 240px);
+      height: 18px;
+      margin-top: 18px;
+      border-radius: 50%;
+      background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0) 70%);
+      opacity: 0;
+      will-change: transform, opacity;
+    }
+
+    .scroll-cue {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      opacity: 0;
+      color: var(--landing-text);
+    }
+
+    .scroll-cue p {
+      font-family: var(--font-body);
+      font-style: italic;
+      font-size: clamp(16px, 1.9vw, 24px);
+      letter-spacing: 0.5px;
+      text-align: center;
+    }
+
+    .scroll-line {
+      position: relative;
+      width: 1px;
+      height: 46px;
+      background: rgba(232, 112, 42, 0.25);
+      overflow: hidden;
+    }
+
+    .scroll-line::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 50%;
+      background: var(--landing-line);
+      animation: scrollDrop 1.8s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+    }
+
+    @keyframes scrollDrop {
+      0%   { transform: translateY(-100%); }
+      100% { transform: translateY(200%); }
+    }
+
+    .credits {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      pointer-events: none;
+      visibility: hidden;
+      --cwipe: 0;
+    }
+
+    .credits-bg {
+      position: absolute;
+      inset: 0;
+      background: var(--landing-bg);
+      -webkit-backdrop-filter: blur(22px);
+      backdrop-filter: blur(22px);
+
+      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, transparent 33.33%, #000 66.66%, #000 100%);
+      mask-image: linear-gradient(to bottom, transparent 0%, transparent 33.33%, #000 66.66%, #000 100%);
+      -webkit-mask-size: 100% 300%;
+      mask-size: 100% 300%;
+      -webkit-mask-repeat: no-repeat;
+      mask-repeat: no-repeat;
+      -webkit-mask-position: 0 calc(var(--cwipe) * 1%);
+      mask-position: 0 calc(var(--cwipe) * 1%);
+    }
+
+    .credits-inner {
+      position: relative;
+      width: 100%;
+      max-width: 700px;
+      padding: 0 6vw;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: clamp(28px, 6vh, 64px);
+      opacity: 0;
+      will-change: opacity, transform, filter;
+    }
+
+    .credits-title {
+      font-family: var(--font-title);
+      font-size: clamp(40px, 7vw, 96px);
+      line-height: 1.05;
+      font-weight: 400;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--landing-text);
+    }
+
+    .credits-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .credits-subheading {
+      font-family: var(--font-body);
+      font-weight: 600;
+      font-size: clamp(11px, 1vw, 13px);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--landing-text);
+      margin-bottom: 4px;
+    }
+
+    .credit-name {
+      font-family: var(--font-body);
+      font-weight: 400;
+      font-size: clamp(18px, 2vw, 28px);
+      line-height: 1.3;
+      color: var(--credits-name);
+    }
+
+    .scroll-section {
+      position: relative;
+      height: 600vh;
+    }
+
+    .video-container {
+      position: sticky;
+      top: 0;
+      width: 100%;
+      height: 100vh;
+      height: 100svh;
+      overflow: hidden;
+    }
+
+    video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      will-change: contents;
+    }
+
+    .text-container {
+      position: absolute;
+      inset: 0;
+      z-index: 5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 6vw;
+      pointer-events: none;
+    }
+
+    #overlayText {
+      width: 100%;
+      max-width: 1000px;
+      text-align: left;
+      opacity: 0;
+      will-change: opacity, transform;
+    }
+
+    #overlayText.left {
+      text-align: left;
+    }
+
+    #overlayText.right {
+      text-align: right;
+    }
+
+    #overlayTitle {
+      font-family: var(--font-title);
+      font-size: clamp(40px, 8vw, 120px);
+      line-height: 1.05;
+      font-weight: 400;
+    }
+
+    #overlaySub {
+      margin-top: 16px;
+      max-width: 500px;
+      font-size: clamp(16px, 1.8vw, 26px);
+      line-height: 1.4;
+      font-weight: 400;
+      opacity: 0.85;
+      font-family: var(--font-body);
+    }
+
+    #overlayDetail {
+      margin-top: 14px;
+      max-width: 500px;
+      font-family: var(--font-body);
+      font-size: clamp(13px, 1.3vw, 18px);
+      line-height: 1.55;
+      font-style: italic;
+      opacity: 0.8;
+    }
+
+    #overlayTools {
+      margin-top: 14px;
+      max-width: 500px;
+      font-family: var(--font-body);
+      font-weight: 600;
+      font-size: clamp(10px, 0.9vw, 12px);
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      opacity: 0.7;
+    }
+
+    #overlayText.left #overlaySub,
+    #overlayText.left #overlayDetail,
+    #overlayText.left #overlayTools {
+      margin-left: 0;
+      margin-right: auto;
+    }
+
+    #overlayText.right #overlaySub,
+    #overlayText.right #overlayDetail,
+    #overlayText.right #overlayTools {
+      margin-left: auto;
+      margin-right: 0;
+    }
+
+
+    .image-placeholder {
+      width: min(100%, 420px);
+      aspect-ratio: 16 / 9;
+      margin-top: 24px;
+      border: 2px dashed rgba(255, 255, 255, 0.8);
+      background: rgba(220, 220, 220, 0.75);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #444;
+      font-family: var(--font-body);
+      font-size: 14px;
+      letter-spacing: 1px;
+      overflow: hidden;
+    }
+
+    #overlayText.left .image-placeholder {
+      margin-left: 0;
+      margin-right: auto;
+    }
+
+    #overlayText.right .image-placeholder {
+      margin-left: auto;
+      margin-right: 0;
+    }
+
+    #loader {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      background: #560404;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+    }
+
+    #loaderWord {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 80px;
+      font-family: var(--font-title), "Noto Sans Devanagari", "Noto Nastaliq Urdu", serif;
+      font-size: 32px;
+      line-height: 1.6;
+      color: #e8702a;
+      letter-spacing: 0.5px;
+    }
+
+    .loader-bar {
+      position: relative;
+      width: min(340px, 70vw);
+      height: 3px;
+      background: #ffffff;
+      border-radius: 3px;
+      margin-top: 8px;
+    }
+
+    #loaderFill {
+      height: 100%;
+      width: 0%;
+      background: #f26b0f;
+      border-radius: 3px;
+    }
+
+    #loaderPct {
+      position: absolute;
+      bottom: 8px;
+      left: 0%;
+      font-size: 15px;
+      color: #e8702a;
+      font-family: var(--font-body);
+      white-space: nowrap;
+    }
+
+    #soundBtn {
+      position: fixed;
+      top: 18px;
+      right: 18px;
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 16px;
+      border: 1px solid rgba(232, 112, 42, 0.55);
+      border-radius: 999px;
+      background: rgba(86, 4, 4, 0.72);
+      -webkit-backdrop-filter: blur(8px);
+      backdrop-filter: blur(8px);
+      color: #e8702a;
+      font-family: var(--font-body);
+      font-weight: 600;
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      cursor: pointer;
+      pointer-events: auto;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    #soundBtn:hover {
+      background: rgba(86, 4, 4, 0.92);
+    }
+
+    #soundBtn[aria-pressed="true"] {
+      background: #e8702a;
+      color: #560404;
+    }
+
+    #soundBtn .bars {
+      display: inline-flex;
+      align-items: flex-end;
+      gap: 2px;
+      height: 12px;
+    }
+
+    #soundBtn .bars i {
+      display: block;
+      width: 2px;
+      height: 3px;
+      background: currentColor;
+      border-radius: 1px;
+    }
+
+    #soundBtn[aria-pressed="true"] .bars i {
+      animation: soundBar 0.9s ease-in-out infinite;
+    }
+
+    #soundBtn[aria-pressed="true"] .bars i:nth-child(2) { animation-delay: 0.15s; }
+    #soundBtn[aria-pressed="true"] .bars i:nth-child(3) { animation-delay: 0.3s; }
+
+    @keyframes soundBar {
+      0%, 100% { height: 3px; }
+      50%      { height: 12px; }
+    }
+
+    @media (max-width: 768px) {
+      #soundBtn {
+        top: 12px;
+        right: 12px;
+        padding: 8px 13px;
+      }
+
+      .intro {
+        align-items: flex-start;
+        padding-top: 84px;
+        padding-bottom: 120px;
+      }
+
+      .intro-inner {
+        grid-template-columns: 1fr;
+        gap: 32px;
+      }
+
+      .intro-img.wide {
+        aspect-ratio: 16 / 10;
+      }
+
+      .intro-img.small {
+        width: 60%;
+      }
+
+      .text-container {
+        padding: 20px;
+      }
+
+      #overlayTitle {
+        font-size: clamp(36px, 10vw, 70px);
+      }
+
+      #overlaySub {
+        margin-top: 12px;
+        font-size: clamp(14px, 4vw, 20px);
+      }
+
+      #overlayDetail {
+        margin-top: 10px;
+        font-size: clamp(12px, 3.4vw, 15px);
+      }
+
+      #overlayTools {
+        margin-top: 10px;
+        font-size: 10px;
+        letter-spacing: 2px;
+      }
+
+      .image-placeholder {
+        width: min(100%, 300px);
+        margin-top: 18px;
+      }
+
+      #tamtaImg {
+        width: min(68vw, 320px);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="loader">
+    <div id="loaderWord">Tamta</div>
+    <div class="loader-bar">
+      <div id="loaderFill"></div>
+      <span id="loaderPct">0%</span>
+    </div>
+  </div>
+
+  <div class="page-background"></div>
+
+  <button id="soundBtn" type="button" aria-pressed="false" aria-label="Toggle workshop sound">
+    <span class="bars" aria-hidden="true"><i></i><i></i><i></i></span>
+    <span id="soundLabel">Sound off</span>
+  </button>
+
+  <section class="landing" id="landing">
+    <div class="landing-bg" id="landingBg"></div>
+
+    <div class="landing-inner" id="landingInner">
+      <div class="tamta-wrap">
+        <img id="tamtaImg" src="image.png" alt="Tamta" draggable="false" />
+        <div class="tamta-shadow" id="tamtaShadow"></div>
+      </div>
+
+      <div class="scroll-cue" id="scrollCue">
+        <p>Scroll to experience the journey</p>
+        <div class="scroll-line"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="credits" id="credits">
+    <div class="credits-bg"></div>
+
+    <div class="credits-inner" id="creditsInner">
+      <h2 class="credits-title">Credits</h2>
+
+      <div class="credits-group">
+        <div class="credits-subheading">Artisans</div>
+        <div class="credit-name">Balwant Tamta</div>
+        <div class="credit-name">Naveen Tamta</div>
+      </div>
+
+      <div class="credits-group">
+        <div class="credits-subheading">Contributors</div>
+        <div class="credit-name">Prof. Smriti Saraswat</div>
+        <div class="credit-name">Syed Ifrah Asfar</div>
+        <div class="credit-name">Madhuri Deby</div>
+        <div class="credit-name">Kriti Mukherjee</div>
+        <div class="credit-name">Rahul Singh Rusiya</div>
+        <div class="credit-name">Aditi Addala</div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Introduction: scrolls away to reveal the floating pot -->
+  <section class="intro" id="intro">
+    <div class="intro-inner">
+
+      <div class="intro-text">
+        <p class="intro-eyebrow reveal">Almora · Kumaon · Uttarakhand</p>
+        <h1 class="intro-title reveal">The Coppersmiths of Almora</h1>
+        <p class="intro-lead reveal">
+          For generations, the Tamta families of Almora have turned flat sheets of copper into vessels for water, worship and the home.
+        </p>
+
+        <div class="intro-points">
+          <div class="intro-point reveal">
+            <h3>The Craft</h3>
+            <p>The name comes from tamra, copper. Every piece is cut, beaten, fired, joined and textured by hand, one vessel at a time.</p>
+          </div>
+          <div class="intro-point reveal">
+            <h3>The City</h3>
+            <p>The craft grew up alongside the hill town. Its temples, rituals and kitchens created the demand, and the sound of hammering became part of Almora's lanes.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="intro-media">
+        <img src="artisan.jpg" alt="Almora town">
+        
+      </div>
+
+    </div>
+
+    <div class="intro-cue reveal">
+      <p>Scroll</p>
+      <div class="scroll-line"></div>
+    </div>
+  </section>
+
+  <section class="scroll-section">
+    <div class="video-container">
+
+      <video
+        id="scrollVideo"
+        src="Timeline 2.mp4"
+        muted
+        playsinline
+        preload="auto"
+        disablepictureinpicture>
+      </video>
+
+      <div class="text-container">
+        <div id="overlayText">
+          <h2 id="overlayTitle"></h2>
+          <p id="overlaySub"></p>
+          <p id="overlayDetail"></p>
+          <p id="overlayTools"></p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    const lenis = new Lenis({
+      duration: 1.2,
+      easing: (t) =>
+        Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      smoothWheel: true
+    });
+
+    lenis.on("scroll", ScrollTrigger.update);
+
+    gsap.ticker.add((time) => {
+      lenis.raf(time * 400);
+    });
+
+    gsap.ticker.lagSmoothing(0);
+
+    const video = document.getElementById("scrollVideo");
+    const section = document.querySelector(".scroll-section");
+    const overlayText = document.getElementById("overlayText");
+    const overlayTitle = document.getElementById("overlayTitle");
+    const overlaySub = document.getElementById("overlaySub");
+    const overlayDetail = document.getElementById("overlayDetail");
+    const overlayTools = document.getElementById("overlayTools");
+
+    const intro = document.getElementById("intro");
+
+    // Height of the intro section. Every scroll position below is offset by this,
+    // because the pot landing, video scrub and credits all come after the intro.
+    function introH() {
+      return intro.offsetHeight;
+    }
+
+    const CUT_SECONDS = 1;
+
+    let targetProgress = 0;
+    let smoothProgress = 0;
+    let duration = 0;
+
+    function videoScale() {
+      return duration > CUT_SECONDS ? (duration - CUT_SECONDS) / duration : 1;
+    }
+
+    function scrubEnd() {
+      return window.innerHeight * (1 + 3 * videoScale());
+    }
+
+    function updateSectionHeight() {
+      section.style.height = (scrubEnd() + window.innerHeight * 2) + "px";
+    }
+
+    updateSectionHeight();
+    ScrollTrigger.addEventListener("refreshInit", updateSectionHeight);
+
+
+    const landing = document.getElementById("landing");
+    const landingBg = document.getElementById("landingBg");
+    const landingInner = document.getElementById("landingInner");
+    const tamtaImg = document.getElementById("tamtaImg");
+    const tamtaShadow = document.getElementById("tamtaShadow");
+    const scrollCue = document.getElementById("scrollCue");
+
+    let landingPlayed = false;
+
+    function playIntro() {
+      gsap.fromTo(
+        ".intro .reveal",
+        { opacity: 0, y: 36 },
+        { opacity: 1, y: 0, duration: 1, ease: "power3.out", stagger: 0.12 }
+      );
+    }
+
+    function playLanding() {
+      if (landingPlayed) return;
+      landingPlayed = true;
+
+      const tl = gsap.timeline();
+
+      tl.fromTo(
+        tamtaImg,
+        { opacity: 0, y: 40, scale: 0.92 },
+        { opacity: 1, y: 0, scale: 1, duration: 1.1, ease: "power3.out" }
+      )
+      .fromTo(
+        tamtaShadow,
+        { opacity: 0, scaleX: 0.6 },
+        { opacity: 1, scaleX: 1, duration: 1.1, ease: "power3.out" },
+        "<"
+      )
+      .fromTo(
+        scrollCue,
+        { opacity: 0, y: 16 },
+        { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" },
+        "-=0.4"
+      );
+
+      gsap.to(tamtaImg, {
+        y: -18,
+        rotation: 1.5,
+        duration: 2.8,
+        ease: "sine.inOut",
+        yoyo: true,
+        repeat: -1,
+        delay: 1.1
+      });
+
+      gsap.to(tamtaShadow, {
+        scaleX: 0.78,
+        opacity: 0.6,
+        duration: 2.8,
+        ease: "sine.inOut",
+        yoyo: true,
+        repeat: -1,
+        delay: 1.1
+      });
+    }
+
+    // The pot enters just as the intro starts lifting away and uncovering it
+    ScrollTrigger.create({
+      trigger: document.body,
+      start: () => Math.max(0, introH() - window.innerHeight * 0.75),
+      end: "max",
+      invalidateOnRefresh: true,
+      onEnter: playLanding
+    });
+
+    const exitTl = gsap.timeline({
+      scrollTrigger: {
+        trigger: document.body,
+        start: () => introH(),
+        end: () => introH() + window.innerHeight,
+        scrub: true,
+        invalidateOnRefresh: true,
+        onLeave: () => { landing.style.visibility = "hidden"; },
+        onEnterBack: () => { landing.style.visibility = "visible"; }
+      }
+    });
+
+    exitTl
+      .to(landingInner, {
+        opacity: 0,
+        y: -70,
+        scale: 0.95,
+        filter: "blur(16px)",
+        ease: "power1.in",
+        duration: 0.6
+      }, 0)
+      .to(landing, {
+        "--wipe": 100,
+        ease: "none",
+        duration: 1
+      }, 0);
+
+    const credits = document.getElementById("credits");
+    const creditsInner = document.getElementById("creditsInner");
+
+    const creditsTl = gsap.timeline({
+      scrollTrigger: {
+        trigger: document.body,
+        start: () => introH() + scrubEnd(),
+        end: () => introH() + scrubEnd() + window.innerHeight,
+        scrub: true,
+        invalidateOnRefresh: true,
+        onEnter: () => { credits.style.visibility = "visible"; },
+        onLeaveBack: () => { credits.style.visibility = "hidden"; }
+      }
+    });
+
+    creditsTl
+      .to(credits, {
+        "--cwipe": 100,
+        ease: "none",
+        duration: 1
+      }, 0)
+      .fromTo(creditsInner,
+        { opacity: 0, y: 70, scale: 0.95, filter: "blur(16px)" },
+        {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          filter: "blur(0px)",
+          ease: "power1.out",
+          duration: 0.6
+        },
+        0.4
+      );
+
+    const textSteps = [
+      {
+        text: "Cutting",
+        sub: "First, the raw material is cut to the required size, separating it from the larger sheet.",
+        detail: "The artisan scribes a circle on the copper sheet with a prakaar (compass), then cuts it out with a kainchi (scissors). The copper comes as rolls bought from wholesalers. In earlier years it was sourced directly from nearby Bageshwar.",
+        tools: "Prakaar (compass) · Kainchi (scissors)",
+        start: 0.00,
+        end: 0.08,
+        align: "left"
+      },
+      {
+        text: "Hammering",
+        sub: "The metal is then struck repeatedly in order to compress it, draw it out and form its basic shape.",
+        detail: "The flat disc is laid on a large carved stone and beaten into a hemispherical bowl, which forms one half of the vessel. Each part is made separately. A single bowl can take a full day. An A-shaped log with an iron rod through it helps the smith bring maximum force down.",
+        tools: "Hammer · Carved stone · A-shaped log",
+        start: 0.10,
+        end: 0.16,
+        align: "left"
+      },
+      {
+        text: "Annealing",
+        sub: "The metal is then heated and left to cool slowly to soften it and relieve internal stress. This strengthens the copper for the final vessel.",
+        detail: "Getting the temperature right is critical. Fresh pine fuelwood is fed into the fire throughout so the vessel isn't damaged. Many furnaces are makeshift, such as one built from a cycle tyre and fan. Traditionally the women of the family gathered the wood and turned the furnace fan.",
+        tools: "Wood-fired furnace · Pine chipwood",
+        start: 0.17,
+        end: 0.22,
+        align: "right"
+      },
+      {
+        text: "Shaping",
+        sub: "The metal is further worked to get the desired shape and curve.",
+        detail: "A wooden mallet shapes the softened copper without puncturing it. Chisels and files then refine the form. On a ghada (water pot), the lower half has to match the top half exactly before the two can be joined.",
+        tools: "Wooden mallet · Chisels · Files",
+        start: 0.25,
+        end: 0.28,
+        align: "left"
+      },
+      {
+        text: "Clamping",
+        sub: "The two pieces of the metal are then held tightly together. This helps to prevent any gaps during the soldering process and create a smooth joint.",
+        detail: "Because each part is made separately, the quality of the fit decides the quality of the joint. A ghada is built from an upper and a lower half, and items such as flower pots need several parts fused together.",
+        tools: "",
+        start: 0.30,
+        end: 0.35,
+        align: "right"
+      },
+      {
+        text: "Soldering",
+        sub: "The two pieces are soldered together to create a strong joint. This finally makes the Ghagar into one single piece.",
+        detail: "A joining powder is prepared for the seam, work that women in Tamta families traditionally did. The joined vessel is then heated on a wood fire to strengthen the fit. Such a seam can only be undone by heating the joint again, which is also how a Tamta vessel is mended. Afterwards the body is beaten to even out the shape, and dents inside are knocked out with long iron rods.",
+        tools: "Joining powder · Wood fire · Iron rods",
+        start: 0.40,
+        end: 0.45,
+        align: "left"
+      },
+      {
+        text: "Cleaning",
+        sub: "The vessel is cleaned and polished to bring out the authentic copper colour and patina.",
+        detail: "Finishing follows a sequence of acid cleaning, buffing and waxing to bring up the shine. Polishing finished pieces was one of the tasks women in the Tamta families took on.",
+        tools: "Acid wash · Buffing · Wax",
+        start: 0.55,
+        end: 0.65,
+        align: "left"
+      },
+      {
+        text: "Texturing",
+        sub: "Finally, the surface is hammered again in careful, repeated strikes to create the texture and pattern that give the vessel its character.",
+        detail: "Specialised hammers carve the design, and the hammering also strengthens the outer layer. Traditional motifs include flowers, petals, creepers and deity images. The most common motif is small squares, made by beating them in by hand.",
+        tools: "Specialised design hammers",
+        start: 0.70,
+        end: 0.78,
+        align: "right"
+      }
+    ];
+
+    let currentStep = -1;
+    let textTween = null;
+
+    function showText(index) {
+      if (index === currentStep) return;
+
+      currentStep = index;
+
+      if (textTween) {
+        textTween.kill();
+      }
+
+      if (index === -1) {
+        textTween = gsap.to(overlayText, {
+          opacity: 0,
+          y: 25,
+          duration: 0.35,
+          ease: "power2.out"
+        });
+        return;
+      }
+
+      const step = textSteps[index];
+
+      textTween = gsap.to(overlayText, {
+        opacity: 0,
+        y: 25,
+        duration: 0.2,
+        ease: "power2.out",
+
+        onComplete: () => {
+          overlayTitle.textContent = step.text;
+          overlaySub.textContent = step.sub;
+          overlayDetail.textContent = step.detail || "";
+          overlayTools.textContent = step.tools || "";
+          overlayTools.style.display = step.tools ? "block" : "none";
+
+          overlayText.classList.remove("left", "right");
+          overlayText.classList.add(step.align);
+
+          textTween = gsap.to(overlayText, {
+            opacity: 1,
+            y: 0,
+            duration: 0.4,
+            ease: "power2.out"
+          });
+        }
+      });
+    }
+
+    function setupScrub() {
+      duration = video.duration;
+
+      ScrollTrigger.create({
+        trigger: section,
+
+        start: () => introH() + window.innerHeight,
+        end: () => introH() + scrubEnd(),
+        invalidateOnRefresh: true,
+
+        onUpdate: (self) => {
+
+          const videoProgress = self.progress * videoScale();
+          targetProgress = videoProgress;
+
+          let newStep = -1;
+
+          for (let i = 0; i < textSteps.length; i++) {
+            if (
+              videoProgress >= textSteps[i].start &&
+              videoProgress <= textSteps[i].end
+            ) {
+              newStep = i;
+              break;
+            }
+          }
+
+          showText(newStep);
+        }
+      });
+
+      gsap.ticker.add(() => {
+        smoothProgress +=
+          (targetProgress - smoothProgress) * 0.12;
+
+        if (
+          Math.abs(targetProgress - smoothProgress) < 0.0005
+        ) {
+          smoothProgress = targetProgress;
+        }
+
+        const t = smoothProgress * duration;
+
+        if (
+          !video.seeking &&
+          Math.abs(video.currentTime - t) > 0.001
+        ) {
+          video.currentTime = t;
+        }
+      });
+
+
+      ScrollTrigger.refresh();
+    }
+
+    if (video.readyState >= 1) {
+      setupScrub();
+    } else {
+      video.addEventListener(
+        "loadedmetadata",
+        setupScrub,
+        { once: true }
+      );
+    }
+
+    video.play()
+      .then(() => video.pause())
+      .catch(() => {});
+
+    window.addEventListener(
+      "load",
+      () => ScrollTrigger.refresh()
+    );
+
+
+    /* ---------- Workshop ambience (scroll-reactive) ---------- */
+    (function () {
+      const soundBtn = document.getElementById("soundBtn");
+      const soundLabel = document.getElementById("soundLabel");
+
+      const ambience = new Audio("tamta-ambient.mp3");
+      ambience.loop = true;
+      ambience.preload = "auto";
+      ambience.volume = 0;
+
+      const mix = { vol: 0 };
+      let soundOn = false;
+      let userChose = false;
+      let scrolling = false;
+      let idleTimer = null;
+      let lastTarget = -1;
+
+      function targetVolume() {
+        if (!soundOn) return 0;
+        const vh = window.innerHeight;
+        const y = window.scrollY - introH();              // scroll position relative to the end of the intro
+        if (y < vh * 0.5) return 0.12;                    // intro + landing: faint fire only
+        if (y > scrubEnd() + vh * 0.5) return 0.12;       // credits: fade back
+        return scrolling ? 0.85 : 0.35;                   // craft section: louder while scrolling
+      }
+
+      function applyVolume(seconds, onDone) {
+        const target = targetVolume();
+        lastTarget = target;
+        gsap.to(mix, {
+          vol: target,
+          duration: seconds,
+          ease: "power1.out",
+          overwrite: true,
+          onUpdate: () => { ambience.volume = Math.max(0, Math.min(1, mix.vol)); },
+          onComplete: onDone
+        });
+      }
+
+      function updateButton() {
+        soundBtn.setAttribute("aria-pressed", String(soundOn));
+        soundLabel.textContent = soundOn ? "Sound on" : "Sound off";
+      }
+
+      function setSound(on) {
+        soundOn = on;
+        updateButton();
+
+        if (on) {
+          ambience.play().then(() => {
+            applyVolume(1.5);
+          }).catch(() => {
+            soundOn = false;
+            updateButton();
+          });
+        } else {
+          applyVolume(0.5, () => ambience.pause());
+        }
+      }
+
+      soundBtn.addEventListener("click", () => {
+        userChose = true;
+        setSound(!soundOn);
+      });
+
+
+      function firstGesture(e) {
+        if (e.target && e.target.closest && e.target.closest("#soundBtn")) return;
+        if (!userChose && !soundOn) setSound(true);
+        ["pointerdown", "keydown", "touchend"].forEach(
+          (ev) => window.removeEventListener(ev, firstGesture)
+        );
+      }
+      ["pointerdown", "keydown", "touchend"].forEach(
+        (ev) => window.addEventListener(ev, firstGesture)
+      );
+
+      lenis.on("scroll", () => {
+        if (!soundOn) return;
+        scrolling = true;
+        clearTimeout(idleTimer);
+        idleTimer = setTimeout(() => {
+          scrolling = false;
+          applyVolume(1.2);
+        }, 350);
+
+        if (Math.abs(targetVolume() - lastTarget) > 0.02) applyVolume(0.4);
+      });
+
+      document.addEventListener("visibilitychange", () => {
+        if (!soundOn) return;
+        if (document.hidden) ambience.pause();
+        else ambience.play().catch(() => {});
+      });
+    })();
+
+
+    (function () {
+      const loader = document.getElementById("loader");
+      const fill = document.getElementById("loaderFill");
+      const pct = document.getElementById("loaderPct");
+      const word = document.getElementById("loaderWord");
+
+      const words = [
+        { at: 0,    text: "Tamta" },
+        { at: 0.33, text: "टम्टा" },
+        { at: 0.66, text: "ٹمٹا" },
+        { at: 1,    text: "Tamta" }
+      ];
+
+      const MIN_TIME = 5800; 
+      const startTime = performance.now();
+      let shown = 0;
+      let finished = false;
+
+      lenis.stop();
+      document.documentElement.style.overflow = "hidden";
+
+      function realProgress() {
+        if (video.readyState >= 4) return 1;
+        if (video.duration && video.buffered.length) {
+          return video.buffered.end(video.buffered.length - 1) / video.duration;
+        }
+        return 0;
+      }
+
+      function finish() {
+        if (finished) return;
+        finished = true;
+        gsap.ticker.remove(tick);
+
+        // Intro text fades in first; the pot animates in later, as the intro scrolls away
+        playIntro();
+
+        gsap.to(loader, {
+          opacity: 0,
+          duration: 0.8,
+          ease: "power2.out",
+          onComplete: () => {
+            loader.remove();
+            document.documentElement.style.overflow = "";
+            window.scrollTo(0, 0);
+            lenis.start();
+            ScrollTrigger.refresh();
+          }
+        });
+      }
+
+      function tick() {
+        const elapsed = (performance.now() - startTime) / MIN_TIME;
+        const target = Math.min(realProgress(), elapsed, 1);
+
+        shown += (target - shown) * 0.08;
+        if (target - shown < 0.002) shown = target;
+
+        const p = shown * 100;
+        fill.style.width = p + "%";
+        pct.textContent = Math.round(p) + "%";
+        pct.style.left = p + "%";
+        pct.style.transform = `translateX(-${p}%)`;
+
+        for (let i = words.length - 1; i >= 0; i--) {
+          if (shown >= words[i].at - 0.001) {
+            if (word.textContent !== words[i].text) word.textContent = words[i].text;
+            break;
+          }
+        }
+
+        if (shown >= 1) setTimeout(finish, 250);
+      }
+
+      gsap.ticker.add(tick);
+
+      video.addEventListener("error", finish);
+    })();
+  </script>
+</body>
+</html>
